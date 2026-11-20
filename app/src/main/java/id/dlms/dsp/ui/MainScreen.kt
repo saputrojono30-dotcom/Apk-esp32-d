@@ -9,6 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,8 +26,8 @@ private val TAB_NAMES = listOf("IN 1", "IN 2", "OUT 1", "OUT 2", "OUT 3", "OUT 4
 fun MainScreen(vm: DspViewModel, meters: Meters) {
     val st by vm.state.collectAsState()
     val settings by vm.settings.collectAsState()
-    var tab by rememberSaveable { mutableStateOf(2) }
-    var page by rememberSaveable { mutableStateOf(0) }
+    var tab by rememberSaveable { mutableIntStateOf(2) }
+    var page by rememberSaveable { mutableIntStateOf(0) }
     var dlg by remember { mutableStateOf("") }
     var menu by remember { mutableStateOf(false) }
 
@@ -125,7 +126,7 @@ fun MainScreen(vm: DspViewModel, meters: Meters) {
 
     when (dlg) {
         "preset" -> PresetDialog(st.slots, { w, n -> vm.preset(w, n) }) { dlg = "" }
-        "copy" -> CopyDialog(tab - 2, { vm.copyOut(tab - 2, it) }) { dlg = "" }
+        "copy" -> CopyDialog(tab - 2, { dst -> vm.copyOut(tab - 2, dst) }) { dlg = "" }
         "security" -> SecurityDialog(settings.ssid, vm::validateWifi, vm::changeWifi, vm::resetWifiOnBoard) { dlg = "" }
     }
 }
